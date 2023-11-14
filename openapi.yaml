@@ -1,93 +1,68 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: TODO Plugin
-  description: A plugin that allows the user to create and manage a TODO list using ChatGPT. If you do not know the user's username, ask them first before making queries to the plugin. Otherwise, use the username "global".
-  version: 'v1'
+  title: ChatGPT Plugin API
+  description: API for the ChatGPT Plugin with retrieval capabilities.
+  version: "1.0.0"
 servers:
   - url: http://localhost:5003
 paths:
-  /todos/{username}:
-    get:
-      operationId: getTodos
-      summary: Get the list of todos
-      parameters:
-      - in: path
-        name: username
-        schema:
-            type: string
+  /retrieve:
+    post:
+      summary: Retrieve relevant documents
+      description: Retrieves documents relevant to the given query.
+      requestBody:
         required: true
-        description: The name of the user.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: The query string to retrieve relevant documents for.
       responses:
-        "200":
-          description: OK
+        '200':
+          description: A list of relevant documents
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTodosResponse'
-    post:
-      operationId: addTodo
-      summary: Add a todo to the list
-      parameters:
-      - in: path
-        name: username
-        schema:
-            type: string
-        required: true
-        description: The name of the user.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/addTodoRequest'
-      responses:
-        "200":
-          description: OK
-    delete:
-      operationId: deleteTodo
-      summary: Delete a todo from the list
-      parameters:
-      - in: path
-        name: username
-        schema:
-            type: string
-        required: true
-        description: The name of the user.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/deleteTodoRequest'
-      responses:
-        "200":
-          description: OK
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    content:
+                      type: string
+                    score:
+                      type: number
+        '400':
+          description: Bad request
 
-components:
-  schemas:
-    getTodosResponse:
-      type: object
-      properties:
-        todos:
-          type: array
-          items:
-            type: string
-          description: The list of todos.
-    addTodoRequest:
-      type: object
-      required:
-      - todo
-      properties:
-        todo:
-          type: string
-          description: The todo to add to the list.
-          required: true
-    deleteTodoRequest:
-      type: object
-      required:
-      - todo_idx
-      properties:
-        todo_idx:
-          type: integer
-          description: The index of the todo to delete.
-          required: true
+  /.well-known/ai-plugin.json:
+    get:
+      summary: Get plugin manifest
+      description: Returns the plugin manifest file.
+      responses:
+        '200':
+          description: Plugin manifest
+          content:
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+
+  /openapi.yaml:
+    get:
+      summary: OpenAPI Specification
+      description: Returns the OpenAPI specification for this API.
+      responses:
+        '200':
+          description: OpenAPI specification in YAML format
+          content:
+            text/yaml:
+              schema:
+                type: string
+        '400':
+          description: Bad request

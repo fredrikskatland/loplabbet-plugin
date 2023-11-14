@@ -4,36 +4,21 @@ import quart
 import quart_cors
 from quart import request
 
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+embeddings = OpenAIEmbeddings()
+db = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+retriever = db.as_retriever()
+
+
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
-# Keep track of todo's. Does not persist if Python session is restarted.
-_TODOS = {}
-
-@app.post("/todos/<string:username>")
-async def add_todo(username):
+@app.post("/retrieve")
+async def retrieve():
     request = await quart.request.get_json(force=True)
-    if username not in _TODOS:
-        _TODOS[username] = []
-    _TODOS[username].append(request["todo"])
-    return quart.Response(response='OK', status=200)
-
-@app.get("/todos/<string:username>")
-async def get_todos(username):
-    return quart.Response(response=json.dumps(_TODOS.get(username, [])), status=200)
-
-@app.delete("/todos/<string:username>")
-async def delete_todo(username):
-    request = await quart.request.get_json(force=True)
-    todo_idx = request["todo_idx"]
-    # fail silently, it's a simple plugin
-    if 0 <= todo_idx < len(_TODOS[username]):
-        _TODOS[username].pop(todo_idx)
-    return quart.Response(response='OK', status=200)
-
-@app.get("/logo.png")
-async def plugin_logo():
-    filename = 'logo.png'
-    return await quart.send_file(filename, mimetype='image/png')
+    query = request["query"]
+    result = retriever.get_relevant_documents(query)
+    return quart.Response(response=json.dumps(result), status=200)
 
 @app.get("/.well-known/ai-plugin.json")
 async def plugin_manifest():
