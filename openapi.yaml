@@ -4,7 +4,7 @@ info:
   description: API for the ChatGPT Plugin with retrieval capabilities.
   version: "1.0.0"
 servers:
-  - url: http://localhost:5003
+  - url: https://loplabbet-api-de981bd1f4e4.herokuapp.com
 paths:
   /retrieve:
     post:
