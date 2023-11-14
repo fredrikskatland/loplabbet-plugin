@@ -1,5 +1,5 @@
 import json
-
+import pickle
 import quart
 import quart_cors
 from quart import request
@@ -7,7 +7,14 @@ from quart import request
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 embeddings = OpenAIEmbeddings()
-db = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+
+# Import documents.pickle
+with open("documents.pickle", "rb") as f:
+    documents = pickle.load(f)
+
+# Create a Chroma database
+db = Chroma(documents, embeddings)
+#db = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
 retriever = db.as_retriever()
 
 
