@@ -1,5 +1,5 @@
 quart
 quart-cors
 langchain
-chromadb-client
+chromadb
 openai
