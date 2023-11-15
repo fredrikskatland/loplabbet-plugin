@@ -53,6 +53,16 @@ async def openapi_spec():
         text = f.read()
         return quart.Response(text, mimetype="text/yaml")
 
+@app.get("/privacy")
+async def privacy_policy():
+    # Method 1: Serve a static file (e.g., HTML or TXT)
+    #return await quart.send_from_directory(directory='path_to_directory', filename='privacy_policy.html')
+
+    # Method 2: Return a string
+    privacy_text = "Your Privacy Policy Text Here"
+    return quart.Response(response=privacy_text, status=200, mimetype='text/plain')
+
+
 def main():
     app.run(debug=True, host="0.0.0.0", port=5003)
 
