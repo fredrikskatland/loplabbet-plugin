@@ -1,13 +1,14 @@
 openapi: 3.0.0
 info:
-  title: ChatGPT Plugin API
-  description: API for the ChatGPT Plugin with retrieval capabilities.
+  title: Loplabbet product retrieval API
+  description: An API that retrieves relevant documents for a given query.
   version: "1.0.0"
 servers:
   - url: https://loplabbet-api-de981bd1f4e4.herokuapp.com
 paths:
   /retrieve:
     post:
+      operationId: retrieve
       summary: Retrieve relevant documents
       description: Retrieves documents relevant to the given query.
       requestBody:
@@ -30,17 +31,34 @@ paths:
                 items:
                   type: object
                   properties:
-                    title:
+                    page_content:
                       type: string
-                    content:
-                      type: string
-                    score:
-                      type: number
+                    metadata:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        produktnavn: 
+                          type: string
+                        ratings_Stabilitet: 
+                          type: string
+                        ratings_Demping: 
+                          type: string
+                        ratings_Løpsfølelse:
+                          type: string
+                        sex:
+                          type: string
+                        category:
+                          type: string
+                        rank:
+                          type: integer
+
         '400':
           description: Bad request
 
   /.well-known/ai-plugin.json:
     get:
+      operationId: getPluginManifest
       summary: Get plugin manifest
       description: Returns the plugin manifest file.
       responses:
@@ -55,6 +73,7 @@ paths:
 
   /openapi.yaml:
     get:
+      operationId: getOpenAPI
       summary: OpenAPI Specification
       description: Returns the OpenAPI specification for this API.
       responses:
