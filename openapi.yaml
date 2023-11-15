@@ -8,7 +8,7 @@ servers:
 paths:
   /retrieve:
     post:
-      operationId: retrieve
+      operationId: post_retrieve
       summary: Retrieve relevant documents
       description: Retrieves documents relevant to the given query.
       requestBody:
