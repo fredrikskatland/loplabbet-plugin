@@ -3,4 +3,5 @@ quart-cors
 langchain
 chromadb
 openai
-tiktoken 
+tiktoken
+hypercorn
